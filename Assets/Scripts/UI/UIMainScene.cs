@@ -1,14 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class UIMainScene : MonoBehaviour
 {
     public static UIMainScene Instance { get; private set; }
-    
-    public interface IUIInfoContent
+	public TMP_Text PlayerName;
+	public TMP_Text PlayerGender;
+	public TMP_Text PlayerAge;
+
+	public interface IUIInfoContent
     {
         string GetName();
         string GetData();
@@ -26,6 +30,14 @@ public class UIMainScene : MonoBehaviour
     {
         Instance = this;
         InfoPopup.gameObject.SetActive(false);
+		if(MainManager.Instance.LoadPlayerInformations())
+		{
+			PlayerInformations data = MainManager.Instance.PlayerInformations;
+			PlayerName.text = data.Name;
+			PlayerGender.text = data.Gender;
+			PlayerAge.text = data.Age.ToString();
+		}
+		
         ResourceDB.Init();
     }
 

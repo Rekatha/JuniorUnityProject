@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
@@ -14,13 +15,20 @@ public class MenuUIHandler : MonoBehaviour
 {
     public ColorPicker ColorPicker;
 
-    public void NewColorSelected(Color color)
+
+	private string playerInformationsJsonPath = "";
+
+	public void NewColorSelected(Color color)
     {
 		// add code here to handle when a color is selected
 		MainManager.Instance.TeamColor = color;
     }
-    
-    private void Start()
+	private void Awake()
+	{
+		playerInformationsJsonPath = Application.persistentDataPath + "/playerinformations.json";
+	}
+
+	private void Start()
     {
         ColorPicker.Init();
         //this will call the NewColorSelected function when the color picker have a color button clicked.
@@ -30,7 +38,14 @@ public class MenuUIHandler : MonoBehaviour
 
 	public void StartNew()
 	{
-		SceneManager.LoadScene(1);
+		if(File.Exists(playerInformationsJsonPath))
+		{
+			SceneManager.LoadScene(2);
+		}
+		else
+		{
+			SceneManager.LoadScene(1);
+		}
 	}
 
 	public void Exit()
@@ -41,6 +56,11 @@ public class MenuUIHandler : MonoBehaviour
 #else
 		Application.Quit();
 #endif
+	}
+
+	public void DeletePlayerInfo()
+	{
+		MainManager.Instance.DeletePlayerInfo();
 	}
 
 	public void SaveColorClicked()

@@ -7,6 +7,7 @@ public class MainManager : MonoBehaviour
 {
 	public static MainManager Instance;
 	public Color TeamColor;
+	public PlayerInformations PlayerInformations;
 
 	private void Awake()
 	{
@@ -26,11 +27,28 @@ public class MainManager : MonoBehaviour
 		public Color TeamColor;
 	}
 
+	[System.Serializable]
+	class PlayerInformationsData
+	{
+		public PlayerInformations PlayerInformations;
+	}
+
+	public bool DeletePlayerInfo()
+	{
+		string path = Application.persistentDataPath + "/playerinformations.json";
+		if (File.Exists(path))
+		{
+			File.Delete(path);
+			return true;
+		}
+		return false;
+	}
+
 	public void SaveColor()
 	{
 		SaveData data = new SaveData
 		{
-			TeamColor = TeamColor
+			TeamColor = TeamColor,
 		};
 
 		string json = JsonUtility.ToJson(data);
@@ -48,5 +66,33 @@ public class MainManager : MonoBehaviour
 
 			TeamColor = data.TeamColor;
 		}
+	}
+
+	public void SavePlayerInformations()
+	{
+		PlayerInformationsData data = new PlayerInformationsData
+		{
+			PlayerInformations = PlayerInformations,
+		};
+
+		string json = JsonUtility.ToJson(data);
+
+		File.WriteAllText(Application.persistentDataPath + "/playerinformations.json", json);
+	}
+
+	public bool LoadPlayerInformations()
+	{
+		string path = Application.persistentDataPath + "/playerinformations.json";
+		if(File.Exists(path))
+		{
+			Debug.Log(path);
+			string json = File.ReadAllText(path);
+
+			PlayerInformationsData data = JsonUtility.FromJson<PlayerInformationsData>(json);
+			PlayerInformations = data.PlayerInformations;
+
+			return true;
+		}
+		return false;
 	}
 }
